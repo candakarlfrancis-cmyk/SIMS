@@ -2,90 +2,96 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Information Management System</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100">
+<body class="bg-slate-50">
 
-  <div class="min-h-screen flex flex-col items-center p-6">
-  <h1 class="text-2xl font-bold mb-6 flex items-center gap-3 pb-3 border-b border-slate-200">
-  <span class="block w-2 h-7 bg-gradient-to-b from-blue-500 to-blue-700 rounded shadow-[0_0_6px_rgba(59,130,246,0.4)]"></span>
-  <span class="text-blue-700 tracking-wide drop-shadow-sm">Student Information Management System</span>
-</h1>
+  <!-- ✅ HEADER -->
+  <header class="bg-blue-600 text-white py-4 shadow">
+    <div class="max-w-7xl mx-auto px-4 flex items-center justify-between">
+      <h1 class="text-xl font-semibold tracking-wide">🎓 Student Information Management System</h1>
+    </div>
+  </header>
 
+  <!-- ✅ MAIN CONTENT WRAPPER -->
+  <main class="max-w-7xl mx-auto mt-6 px-4">
 
-
-
-    <!-- 🎯 Add Student Section -->
-    <section class="w-full max-w-2xl bg-white p-3 rounded-xl shadow border border-slate-200 mb-6">
-      <div class="flex items-center gap-2 mb-3">
-        <span class="text-blue-600 text-lg font-semibold">➕ Add Student</span>
-        <div class="flex-1 border-t border-slate-200"></div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-4">
-        <input id="studentID" type="text" placeholder="Student ID" class="px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400" />
-        <input id="fullName" type="text" placeholder="Full Name" class="px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400" />
-        <select id="gender" class="px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400">
-          <option value="">Gender</option>
+    <!-- ✅ ADD STUDENT SECTION -->
+    <section class="bg-white border rounded-xl p-4 shadow-sm">
+      <h2 class="font-semibold text-lg mb-3 flex items-center gap-2">➕ Add Student</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <input id="studentID" class="border p-2 rounded" placeholder="Student ID">
+        <input id="fullName" class="border p-2 rounded" placeholder="Full Name">
+        <select id="gender" class="border p-2 rounded">
+          <option value="">Select Gender</option>
           <option>Male</option>
           <option>Female</option>
-          <option>Other</option>
         </select>
-        <input id="gmail" type="email" placeholder="Gmail" class="px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400" />
-        <input id="program" type="text" placeholder="Program (e.g., BSIT)" class="px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400" />
-        <input id="yearLevel" type="text" placeholder="Year Level (e.g., 2nd)" class="px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400" />
-        <input id="university" type="text" placeholder="University" class="px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400 col-span-2" />
+        <input id="gmail" class="border p-2 rounded" placeholder="Gmail">
+        <input id="program" class="border p-2 rounded" placeholder="Program">
+        <input id="yearLevel" class="border p-2 rounded" placeholder="Year Level">
+        <input id="university" class="border p-2 rounded" placeholder="University">
       </div>
-      <button id="addStudentBtn" class="mt-4 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Add Student</button>
+      <button id="addStudentBtn" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+        Add Student
+      </button>
     </section>
 
-    <!-- 📋 Student Records Section -->
-    <section class="w-full max-w-8xl bg-white p-6 rounded-xl shadow border border-slate-200">
-      <div class="flex items-center gap-2 mb-3">
-        <span class="text-blue-600 text-lg font-semibold">📋 Student Records</span>
-        <div class="flex-1 border-t border-slate-200"></div>
+    <!-- ✅ FILTER SECTION -->
+    <section class="mt-6 bg-white border rounded-xl p-4 shadow-sm">
+      <h2 class="font-semibold text-lg mb-3">🔍 Filters</h2>
+      <div class="grid grid-cols-3 gap-3">
+        <input id="searchInput" class="border p-2 rounded" placeholder="Search by name or program">
+        <select id="genderFilter" class="border p-2 rounded">
+          <option value="">All Genders</option>
+          <option>Male</option>
+          <option>Female</option>
+        </select>
+        <select id="programFilter" class="border p-2 rounded">
+          <option value="">All Programs</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- ✅ STUDENT RECORDS SECTION (Updated Layout - Wider & Taller) -->
+    <section class="mt-6 max-w-7xl mx-auto">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-semibold text-lg flex items-center gap-2">
+          📋 Student Records <span id="recordCount" class="text-sm font-normal text-slate-500">(0)</span>
+        </h2>
       </div>
 
-      <div class="flex flex-col md:flex-row gap-3 md:items-center md:justify-between mb-4">
-        <div class="flex gap-2">
-          <input id="searchInput" type="text" placeholder="Search name or program..." class="px-3 py-2 border rounded-lg w-72 outline-none focus:ring-2 focus:ring-blue-400" />
-          <select id="genderFilter" class="px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400">
-            <option value="">All Genders</option>
-            <option>Male</option>
-            <option>Female</option>
-            <option>Other</option>
-          </select>
-          <select id="programFilter" class="px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400">
-            <option value="">All Programs</option>
-          </select>
+      <!-- ✅ Table Wrapper (Increased Height to Show ~10 Students) -->
+      <div class="border rounded-xl overflow-hidden shadow-sm">
+        <div class="overflow-y-auto max-h-[600px]">
+          <table class="w-full text-sm">
+            <thead class="bg-blue-600 text-white sticky top-0">
+              <tr>
+                <th class="px-3 py-3 border">Student ID</th>
+                <th class="px-3 py-3 border">Full Name</th>
+                <th class="px-3 py-3 border">Gender</th>
+                <th class="px-3 py-3 border">Gmail</th>
+                <th class="px-3 py-3 border">Program</th>
+                <th class="px-3 py-3 border">Year Level</th>
+                <th class="px-3 py-3 border">University</th>
+                <th class="px-3 py-3 border">Action</th>
+              </tr>
+            </thead>
+            <tbody id="studentsTbody" class="text-slate-700">
+              <!-- Rows are injected dynamically via JS -->
+            </tbody>
+          </table>
         </div>
-        <div class="text-sm text-slate-600">Records: <span id="recordCount">0</span></div>
       </div>
-
-      <!-- ✅ Height fixed to 5 rows, truncate long text -->
-      <div class="overflow-y-auto max-h-[245px] w-full overflow-x-hidden rounded-lg">
-        <table class="w-full table-fixed border border-slate-300">
-          <thead class="bg-blue-600 text-white sticky top-0 z-10">
-            <tr class="text-left text-sm font-semibold">
-              <th class="px-2 py-2 border border-slate-300 w-[90px]">ID</th>
-              <th class="px-2 py-2 border border-slate-300 w-[120px]">Full Name</th>
-              <th class="px-2 py-2 border border-slate-300 w-[70px]">Gender</th>
-              <th class="px-2 py-2 border border-slate-300 w-[150px]">Gmail</th>
-              <th class="px-2 py-2 border border-slate-300 w-[130px]">Program</th>
-              <th class="px-2 py-2 border border-slate-300 w-[60px]">Year</th>
-              <th class="px-2 py-2 border border-slate-300 w-[140px]">University</th>
-              <th class="px-2 py-2 border border-slate-300 text-center w-[70px]">Action</th>
-            </tr>
-          </thead>
-          <tbody id="studentsTbody" class="text-sm"></tbody>
-        </table>
-      </div>
-
     </section>
-  </div>
 
+  </main>
+
+  <!-- ✅ Toast Container (Bottom Right) -->
+  <div id="toast" class="fixed bottom-4 right-4 px-4 py-2 rounded-lg text-white shadow-lg opacity-0 transition duration-300 pointer-events-none translate-y-4"></div>
+
+  <!-- ✅ Script -->
   <script src="app.js"></script>
 </body>
 </html>
