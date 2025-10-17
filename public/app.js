@@ -7,7 +7,28 @@ const addStudentBtn = document.getElementById("addStudentBtn");
 
 let students = [];
 
-// ✅ Fetch Students from Backend
+// ✅ Toast Function (Bottom Right)
+function showToast(message, type = "success") {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+
+  // Apply base class + dynamic color
+  toast.className =
+    "fixed bottom-4 right-4 px-4 py-2 rounded-lg text-white shadow-lg transition duration-300 pointer-events-none " +
+    (type === "success" ? "bg-green-600" : "bg-red-600");
+
+  // Show toast
+  toast.style.opacity = "1";
+  toast.style.transform = "translateY(0)"; // slides in clean
+
+  // Hide after 2 seconds
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateY(20px)"; // smooth slide down
+  }, 2000);
+}
+
+// ✅ Fetch Students
 async function fetchStudents() {
   try {
     const res = await fetch("/students");
@@ -19,7 +40,7 @@ async function fetchStudents() {
   }
 }
 
-// ✅ Render Table (with truncate + no horizontal scroll)
+// ✅ Render Table
 function renderTable(list) {
   if (!Array.isArray(list) || list.length === 0) {
     studentsTbody.innerHTML = `<tr><td colspan="8" class="px-3 py-4 text-center text-slate-500">No records found</td></tr>`;
@@ -57,38 +78,71 @@ function renderTable(list) {
   });
 }
 
-// ✅ Populate Program Filter Dropdown
+// ✅ Populate Program Filter
 function populateProgramFilter(data) {
-  const uniquePrograms = [...new Set(data.map(s => s.Program))];
-  programFilter.innerHTML = `<option value="">All Programs</option>` + uniquePrograms.map(p => `<option>${p}</option>`).join("");
+  const uniquePrograms = [...new Set(data.map((s) => s.Program))];
+  programFilter.innerHTML =
+    `<option value="">All Programs</option>` +
+    uniquePrograms.map((p) => `<option>${p}</option>`).join("");
 }
 
-// ✅ Handle Add
+// ✅ Handle Add Student + Toast + Field Clear
 addStudentBtn.addEventListener("click", async () => {
   const newStudent = {
-    "Student ID": document.getElementById("studentID").value,
-    "Full Name": document.getElementById("fullName").value,
-    "Gender": document.getElementById("gender").value,
-    Gmail: document.getElementById("gmail").value,
-    Program: document.getElementById("program").value,
-    "Year Level": document.getElementById("yearLevel").value,
-    University: document.getElementById("university").value,
+    "Student ID": document.getElementById("studentID").value.trim(),
+    "Full Name": document.getElementById("fullName").value.trim(),
+    Gender: document.getElementById("gender").value.trim(),
+    Gmail: document.getElementById("gmail").value.trim(),
+    Program: document.getElementById("program").value.trim(),
+    "Year Level": document.getElementById("yearLevel").value.trim(),
+    University: document.getElementById("university").value.trim(),
   };
 
-  const res = await fetch("/students", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(newStudent),
-  });
+  try {
+    const res = await fetch("/students", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newStudent),
+    });
 
-  if (res.ok) fetchStudents(); // refresh table
+    if (res.ok) {
+      showToast("✅ Student added successfully!", "success");
+
+      // ✅ Auto Clear Fields
+      document.getElementById("studentID").value = "";
+      document.getElementById("fullName").value = "";
+      document.getElementById("gender").value = "";
+      document.getElementById("gmail").value = "";
+      document.getElementById("program").value = "";
+      document.getElementById("yearLevel").value = "";
+      document.getElementById("university").value = "";
+
+      fetchStudents(); // refresh table
+    } else {
+      const errorData = await res.json();
+      showToast("❌ " + (errorData.error || "Failed to add student"), "error");
+    }
+  } catch (err) {
+    showToast("❌ Server error. Please try again.", "error");
+  }
 });
 
-// ✅ Handle Delete
+// ✅ Handle Delete + Toast
 async function handleDelete(e) {
-  const id = e.target.getAttribute("data-id");
-  await fetch(`/students/${id}`, { method: "DELETE" });
-  fetchStudents(); // refresh
+  const id = decodeURIComponent(e.target.getAttribute("data-id"));
+  if (!confirm("Are you sure you want to delete this student?")) return;
+
+  try {
+    const res = await fetch(`/students/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      showToast("🗑️ Student deleted successfully!", "success");
+      fetchStudents(); // refresh table
+    } else {
+      showToast("❌ Failed to delete student.", "error");
+    }
+  } catch (err) {
+    showToast("❌ Server error on delete.", "error");
+  }
 }
 
 // ✅ Live Search & Filter
@@ -100,7 +154,8 @@ async function handleDelete(e) {
 
     const filtered = students.filter((s) => {
       return (
-        (s["Full Name"].toLowerCase().includes(searchTerm) || s.Program.toLowerCase().includes(searchTerm)) &&
+        (s["Full Name"].toLowerCase().includes(searchTerm) ||
+          s.Program.toLowerCase().includes(searchTerm)) &&
         (genderTerm === "" || s.Gender === genderTerm) &&
         (programTerm === "" || s.Program === programTerm)
       );
